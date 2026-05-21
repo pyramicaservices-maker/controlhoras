@@ -1,0 +1,14 @@
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Add bash and other debug tools if necessary
+RUN apk update && apk add bash
+
+COPY package.json package-lock.json* ./
+
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "dev"]

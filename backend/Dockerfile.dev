@@ -1,0 +1,11 @@
+FROM node:20-alpine
+
+WORKDIR /app
+RUN apk update && apk add bash sqlite xdg-utils
+
+COPY package*.json ./
+RUN npm install
+
+COPY . .
+
+CMD ["npm", "run", "dev"]
