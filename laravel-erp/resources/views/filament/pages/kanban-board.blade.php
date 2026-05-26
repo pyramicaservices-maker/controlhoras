@@ -1,12 +1,11 @@
 <x-filament-panels::page>
-    <div class="board-container h-full w-full overflow-hidden" x-data="kanbanBoard()">
-        <div class="kanban-board h-full w-full">
+    <div class="board-container" x-data="kanbanBoard()">
+        <div class="kanban-board">
             @php
                 $statuses = [
-                    'todo' => 'Por hacer',
-                    'inProgress' => 'En progreso',
-                    'review' => 'En revisión',
-                    'done' => 'Hecho',
+                    'todo' => 'Por Hacer',
+                    'inProgress' => 'En Progreso',
+                    'done' => 'Terminado',
                 ];
             @endphp
             
@@ -18,9 +17,10 @@
                     <h3>{{ $statusLabel }}</h3>
                     <div class="task-list">
                         @foreach($tasksByStatus[$statusKey] ?? [] as $task)
-                            <div class="task-card glass-panel"
+                            <div class="task-card glass-panel cursor-pointer"
                                  draggable="true"
-                                 @dragstart="dragStart($event, '{{ $task->id }}', '{{ $statusKey }}')">
+                                 @dragstart="dragStart($event, '{{ $task->id }}', '{{ $statusKey }}')"
+                                 onclick="if (!event.target.closest('button') && !event.target.closest('a')) window.location.href='/admin/tasks/{{ $task->id }}/edit'">
                                 <div class="flex justify-between items-center mb-2">
                                     <span class="text-xs px-2 py-1 rounded {{ $task->priority == 'Alta' ? 'bg-red-900/50 text-red-200' : ($task->priority == 'Media' ? 'bg-amber-900/50 text-amber-200' : 'bg-green-900/50 text-green-200') }}">
                                         {{ $task->priority }}

@@ -33,7 +33,6 @@ class KanbanBoard extends Page
         $this->tasksByStatus = [
             'todo' => $allTasks->where('status', 'todo')->values()->all(),
             'inProgress' => $allTasks->where('status', 'inProgress')->values()->all(),
-            'review' => $allTasks->where('status', 'review')->values()->all(),
             'done' => $allTasks->where('status', 'done')->values()->all(),
         ];
 
@@ -44,7 +43,7 @@ class KanbanBoard extends Page
     public function updateTaskStatus($taskId, $newStatus)
     {
         $task = Task::find($taskId);
-        if ($task && in_array($newStatus, ['todo', 'inProgress', 'review', 'done'])) {
+        if ($task && in_array($newStatus, ['todo', 'inProgress', 'done'])) {
             $task->status = $newStatus;
             $task->status_changed_at = now();
             $task->save();

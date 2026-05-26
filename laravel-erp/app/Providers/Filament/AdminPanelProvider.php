@@ -35,9 +35,15 @@ class AdminPanelProvider extends PanelProvider
                 'warning' => '#ffb86c',
                 'danger' => '#ff5555',
             ])
-            ->viteTheme('resources/css/app.css')
             ->topNavigation()
             ->defaultThemeMode(\Filament\Enums\ThemeMode::Dark)
+            ->renderHook(
+                \Filament\View\PanelsRenderHook::HEAD_END,
+                fn (): \Illuminate\Support\HtmlString => new \Illuminate\Support\HtmlString(
+                    '<script>document.documentElement.classList.add("dark"); localStorage.setItem("theme", "dark");</script>' .
+                    app(\Illuminate\Foundation\Vite::class)(['resources/css/app.css'])->toHtml()
+                )
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\Filament\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\Filament\Pages')
             ->pages([

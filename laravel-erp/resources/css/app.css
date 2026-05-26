@@ -1,5 +1,5 @@
-@import 'tailwindcss';
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import 'tailwindcss';
 
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 @source '../../storage/framework/views/*.php';
@@ -14,44 +14,42 @@
         'Segoe UI Symbol', 'Noto Color Emoji';
 }
 
-@layer base {
-    :root {
-        --bg-color: #0d0f18; /* Darker, more premium background */
-        --text-main: #f8f8f2;
-        --text-muted: #8b949e;
-        --panel-bg: rgba(20, 24, 36, 0.6);
-        --panel-border: rgba(255, 255, 255, 0.08);
-        --active-color: #7b2cbf; /* Vibrant Purple from logo */
-        --accent-cyan: #00f2fe; /* Cyan from logo gradient */
-        --primary-gradient: linear-gradient(135deg, #7b2cbf 0%, #4facfe 100%);
-        --card-bg: rgba(20, 24, 36, 0.8);
-    }
+:root {
+    --bg-color: #0d0f18; /* Darker, more premium background */
+    --text-main: #f8f8f2;
+    --text-muted: #8b949e;
+    --panel-bg: rgba(20, 24, 36, 0.6);
+    --panel-border: rgba(255, 255, 255, 0.08);
+    --active-color: #7b2cbf; /* Vibrant Purple from logo */
+    --accent-cyan: #00f2fe; /* Cyan from logo gradient */
+    --primary-gradient: linear-gradient(135deg, #7b2cbf 0%, #4facfe 100%);
+    --card-bg: rgba(20, 24, 36, 0.8);
+}
 
-    body {
-        font-family: 'Inter', sans-serif;
-        background-color: var(--bg-color) !important;
-        color: var(--text-main);
-        /* Subtle glassmorphism background effect */
-        background-image: 
-            radial-gradient(circle at 15% 50%, rgba(123, 44, 191, 0.08), transparent 25%),
-            radial-gradient(circle at 85% 30%, rgba(0, 242, 254, 0.08), transparent 25%) !important;
-    }
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--bg-color) !important;
+    color: var(--text-main);
+    /* Subtle glassmorphism background effect */
+    background-image: 
+        radial-gradient(circle at 15% 50%, rgba(123, 44, 191, 0.08), transparent 25%),
+        radial-gradient(circle at 85% 30%, rgba(0, 242, 254, 0.08), transparent 25%) !important;
+}
 
-    /* Scrollbar styling */
-    *::-webkit-scrollbar {
-        width: 8px;
-        height: 8px;
-    }
-    *::-webkit-scrollbar-track {
-        background: transparent; 
-    }
-    *::-webkit-scrollbar-thumb {
-        background: rgba(255,255,255,0.15); 
-        border-radius: 4px;
-    }
-    *::-webkit-scrollbar-thumb:hover {
-        background: rgba(255,255,255,0.3); 
-    }
+/* Scrollbar styling */
+*::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+*::-webkit-scrollbar-track {
+    background: transparent; 
+}
+*::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.15); 
+    border-radius: 4px;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background: rgba(255,255,255,0.3); 
 }
 
 .glass-panel {
@@ -223,7 +221,7 @@
     justify-content: center !important;
 }
 
-.fi-simple-card {
+.fi-simple-card, .fi-simple-page-content {
     background: var(--panel-bg) !important;
     backdrop-filter: blur(12px) !important;
     -webkit-backdrop-filter: blur(12px) !important;
@@ -232,7 +230,7 @@
     box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3) !important;
     width: 380px !important;
     max-width: 100% !important;
-    padding: 2.5rem !important;
+    padding: 2rem !important;
 }
 
 /* Customize Logo / Header on Login */
@@ -243,7 +241,7 @@
 }
 
 /* Inputs & Form Fields */
-.fi-simple-card input {
+.fi-simple-card input, .fi-simple-page-content input {
     background-color: rgba(0,0,0,0.3) !important;
     border: 1px solid var(--panel-border) !important;
     color: white !important;
@@ -252,13 +250,13 @@
     transition: border-color 0.2s, box-shadow 0.2s !important;
 }
 
-.fi-simple-card input:focus {
+.fi-simple-card input:focus, .fi-simple-page-content input:focus {
     border-color: var(--active-color) !important;
     box-shadow: 0 0 0 2px rgba(123, 44, 191, 0.2) !important;
 }
 
 /* Submit Button */
-.fi-simple-card button[type="submit"] {
+.fi-simple-card button[type="submit"], .fi-simple-page-content button[type="submit"] {
     background: var(--primary-gradient) !important;
     color: white !important;
     border: none !important;
@@ -270,24 +268,63 @@
     box-shadow: 0 4px 15px rgba(123, 44, 191, 0.3) !important;
 }
 
-.fi-simple-card button[type="submit"]:hover {
+.fi-simple-card button[type="submit"]:hover, .fi-simple-page-content button[type="submit"]:hover {
     opacity: 0.9 !important;
     transform: translateY(-1px) !important;
 }
 
-.fi-simple-card button[type="submit"]:active {
+.fi-simple-card button[type="submit"]:active, .fi-simple-page-content button[type="submit"]:active {
     transform: translateY(0) !important;
 }
 
 /* Text links in simple layout */
-.fi-simple-card a {
+.fi-simple-card a, .fi-simple-page-content a {
     color: var(--text-muted) !important;
     text-decoration: underline !important;
     transition: color 0.2s !important;
 }
 
-.fi-simple-card a:hover {
+.fi-simple-card a:hover, .fi-simple-page-content a:hover {
     color: white !important;
+}
+
+/* Main Panel Overrides to enforce dark background & hide light-themed shapes */
+.fi-main-ctn {
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+.fi-theme-switcher {
+    display: none !important;
+}
+
+/* Filament Topbar Navigation Overrides */
+.fi-topbar-item a,
+.fi-topbar-item-button,
+.fi-topbar-item-link {
+    border-radius: 20px !important;
+    transition: all 0.3s ease !important;
+    border: 1px solid transparent !important;
+    padding: 6px 14px !important;
+}
+
+.fi-topbar-item-button:hover,
+.fi-topbar-item-link:hover,
+.fi-topbar-item a:hover {
+    color: #fff !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.fi-topbar-item-active a,
+.fi-topbar-item-button.fi-active,
+.fi-topbar-item-link.fi-active,
+.fi-topbar-item[data-active="true"] a {
+    color: #fff !important;
+    background: rgba(123, 44, 191, 0.2) !important;
+    border-color: rgba(123, 44, 191, 0.5) !important;
+    box-shadow: 0 0 15px rgba(123, 44, 191, 0.3) !important;
 }
 
 
