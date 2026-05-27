@@ -6,6 +6,8 @@ import { PieChart as RePieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
+const API_BASE_URL = ''; // using Vite proxy
+
 const AuthContext = createContext(null);
 
 function formatTime(seconds) {
@@ -147,7 +149,7 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+      const res = await fetch(`${API_BASE_URL}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
       const data = await res.json();
       if (res.ok) { login(data.user, data.token); navigate('/'); } else setError(data.error || 'Error de login');
     } catch (err) { setError('Error de conexión al servidor'); }
@@ -156,7 +158,7 @@ function Login() {
   const handleRecover = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/api/auth/recover-password', {
+      const res = await fetch(`${API_BASE_URL}/api/auth/recover-password`, {
         method: 'POST', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email })
       });
@@ -238,7 +240,7 @@ function Dashboard() {
   const [newTagColor, setNewTagColor] = useState('#0088FE');
 
   const fetchData = () => {
-    fetch('http://localhost:3000/data')
+    fetch(`${API_BASE_URL}/data`)
       .then(res => res.json())
       .then(fetchedData => {
         setUsers(fetchedData.users);
@@ -298,7 +300,7 @@ function Dashboard() {
 
   const saveTimeEntry = async (taskId, secondsToAdd) => {
     try { 
-      await fetch(`http://localhost:3000/tasks/${taskId}/time-entries`, { 
+      await fetch(`${API_BASE_URL}/tasks/${taskId}/time-entries`, { 
         method: 'POST', headers: { 'Content-Type': 'application/json' }, 
         body: JSON.stringify({ userId: user.id, timeAdded: secondsToAdd }) 
       }); 
@@ -332,7 +334,7 @@ function Dashboard() {
   const deleteTimeEntry = async (entryId) => {
     if(!window.confirm("¿Seguro que quieres borrar este registro de tiempo?")) return;
     try {
-      await fetch(`http://localhost:3000/time-entries/${entryId}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/time-entries/${entryId}`, { method: 'DELETE' });
       fetchData();
     } catch(err) {}
   };
@@ -359,14 +361,14 @@ function Dashboard() {
     finishTaskIds.splice(destination.index, 0, draggableId);
 
     setData({ ...data, columns: { ...data.columns, [startColumn.id]: { ...startColumn, taskIds: startTaskIds }, [finishColumn.id]: { ...finishColumn, taskIds: finishTaskIds } } });
-    try { fetch(`http://localhost:3000/tasks/${draggableId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: finishColumn.id }) }); } catch(err) {}
+    try { fetch(`${API_BASE_URL}/tasks/${draggableId}/status`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ status: finishColumn.id }) }); } catch(err) {}
   };
 
 
 
   const deleteProject = async (id) => {
     if(!window.confirm("¿Seguro que quieres borrar este proyecto? Se borrarán TODAS sus tareas asociadas.")) return;
-    await fetch(`http://localhost:3000/projects/${id}`, { method: 'DELETE' });
+    await fetch(`${API_BASE_URL}/projects/${id}`, { method: 'DELETE' });
     fetchData();
   };
 
@@ -381,7 +383,7 @@ function Dashboard() {
     if (!newTaskContent.trim() || !selectedProjectId) return alert("Selecciona un proyecto y escribe una tarea.");
     const finalUserIds = isAdmin ? (selectedUserIds.length > 0 ? selectedUserIds : [user.id]) : [user.id];
     try {
-      await fetch('http://localhost:3000/tasks', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: newTaskContent, userIds: finalUserIds, projectId: selectedProjectId, priority: selectedPriority, status: 'todo' }) });
+      await fetch(`${API_BASE_URL}/tasks`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ content: newTaskContent, userIds: finalUserIds, projectId: selectedProjectId, priority: selectedPriority, status: 'todo' }) });
       setNewTaskContent('');
       fetchData();
     } catch (err) {}
@@ -390,7 +392,7 @@ function Dashboard() {
   const saveEditedTask = async () => {
     if (!editingTask) return;
     try {
-      await fetch(`http://localhost:3000/tasks/${editingTask.id}`, {
+      await fetch(`${API_BASE_URL}/tasks/${editingTask.id}`, {
         method: 'PUT', headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(editingTask)
       });
@@ -406,7 +408,7 @@ function Dashboard() {
       formData.append('files', e.target.files[i]);
     }
     try {
-      const res = await fetch(`http://localhost:3000/tasks/${editingTask.id}/attachments`, { method: 'POST', body: formData });
+      const res = await fetch(`${API_BASE_URL}/tasks/${editingTask.id}/attachments`, { method: 'POST', body: formData });
       if (res.ok) {
         const d = await res.json();
         setEditingTask(prev => ({...prev, attachments: JSON.parse(d.attachments)}));
@@ -418,7 +420,7 @@ function Dashboard() {
     if(e) e.stopPropagation();
     if(!window.confirm("¿Archivar esta tarea terminada?")) return;
     try {
-      await fetch(`http://localhost:3000/api/tasks/${taskId}/archive`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({archived: true}) });
+      await fetch(`${API_BASE_URL}/api/tasks/${taskId}/archive`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({archived: true}) });
       fetchData();
     } catch(err){}
   };
@@ -426,7 +428,7 @@ function Dashboard() {
   const archiveProject = async (projectId) => {
     if(!window.confirm("¿Archivar este proyecto?")) return;
     try {
-      await fetch(`http://localhost:3000/api/projects/${projectId}/archive`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({archived: true}) });
+      await fetch(`${API_BASE_URL}/api/projects/${projectId}/archive`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({archived: true}) });
       fetchData();
     } catch(err){}
   };
@@ -724,7 +726,7 @@ function Dashboard() {
                 <div style={{marginTop:'10px', marginBottom:'15px'}}>
                   {editingTask.attachments && editingTask.attachments.length > 0 ? (
                     <ul style={{paddingLeft:'20px', margin:0}}>
-                      {editingTask.attachments.map((p, i) => <li key={i} style={{marginBottom:'5px'}}><a href={`http://localhost:3000${p}`} target="_blank" rel="noreferrer" style={{color:'var(--active-color)'}}>Ver archivo adjunto {i+1}</a></li>)}
+                      {editingTask.attachments.map((p, i) => <li key={i} style={{marginBottom:'5px'}}><a href={`${API_BASE_URL}${p}`} target="_blank" rel="noreferrer" style={{color:'var(--active-color)'}}>Ver archivo adjunto {i+1}</a></li>)}
                     </ul>
                   ) : <span style={{fontSize:'0.8rem', color:'#888'}}>Sin adjuntos</span>}
                 </div>
@@ -787,7 +789,7 @@ function ProjectsPage() {
   const [newProjectEndDate, setNewProjectEndDate] = useState('');
 
   const fetchData = () => {
-    fetch('http://localhost:3000/data').then(r=>r.json()).then(d => {
+    fetch(`${API_BASE_URL}/data`).then(r=>r.json()).then(d => {
       setProjects(d.projects);
     });
   };
@@ -796,7 +798,7 @@ function ProjectsPage() {
   const archiveProject = async (projectId) => {
     if(!window.confirm("¿Archivar este proyecto?")) return;
     try {
-      await fetch(`http://localhost:3000/api/projects/${projectId}/archive`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({archived: true}) });
+      await fetch(`${API_BASE_URL}/api/projects/${projectId}/archive`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify({archived: true}) });
       fetchData();
     } catch(err){}
   };
@@ -804,7 +806,7 @@ function ProjectsPage() {
   const deleteProject = async (projectId) => {
     if(!window.confirm("¿Borrar este proyecto definitivamente?")) return;
     try {
-      await fetch(`http://localhost:3000/projects/${projectId}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/projects/${projectId}`, { method: 'DELETE' });
       fetchData();
     } catch(err){}
   };
@@ -822,7 +824,7 @@ function ProjectsPage() {
     e.preventDefault();
     try {
       const isEditing = !!editingProject;
-      const url = isEditing ? `http://localhost:3000/projects/${editingProject.id}` : 'http://localhost:3000/projects';
+      const url = isEditing ? `${API_BASE_URL}/projects/${editingProject.id}` : `${API_BASE_URL}/projects`;
       const method = isEditing ? 'PUT' : 'POST';
       await fetch(url, {
         method, headers: {'Content-Type': 'application/json'},
@@ -926,7 +928,7 @@ function HistoryPage() {
   const [historyPage, setHistoryPage] = useState(1);
 
   const fetchData = () => {
-    fetch('http://localhost:3000/data').then(r=>r.json()).then(fetchedData => {
+    fetch(`${API_BASE_URL}/data`).then(r=>r.json()).then(fetchedData => {
       const newTasks = {};
       const parsedTasks = fetchedData.tasks.map(t => ({...t, userIds: JSON.parse(t.userIds || '[]'), attachments: JSON.parse(t.attachments || '[]')}));
       
@@ -954,7 +956,7 @@ function HistoryPage() {
   const deleteProject = async (projectId) => {
     if(!window.confirm("¿Borrar este proyecto definitivamente? Se borrarán TODAS sus tareas.")) return;
     try {
-      await fetch(`http://localhost:3000/projects/${projectId}`, { method: 'DELETE' });
+      await fetch(`${API_BASE_URL}/projects/${projectId}`, { method: 'DELETE' });
       fetchData();
     } catch(err){}
   };
@@ -1049,7 +1051,7 @@ function ProjectProgress() {
   const [filterType, setFilterType] = useState('all');
 
   useEffect(() => {
-    fetch('http://localhost:3000/data').then(r=>r.json()).then(d => setData(d));
+    fetch(`${API_BASE_URL}/data`).then(r=>r.json()).then(d => setData(d));
   }, []);
 
   if (!isAdmin) return <Navigate to="/" />;
@@ -1148,7 +1150,7 @@ function Profile() {
   const [newUserPassword, setNewUserPassword] = useState('');
   const [newUserRole, setNewUserRole] = useState('user');
 
-  useEffect(() => { if (isAdmin) fetch('http://localhost:3000/data').then(r=>r.json()).then(d=>setUsers(d.users)); }, [isAdmin]);
+  useEffect(() => { if (isAdmin) fetch(`${API_BASE_URL}/data`).then(r=>r.json()).then(d=>setUsers(d.users)); }, [isAdmin]);
 
   const handleFile = (e) => {
     const file = e.target.files[0];
@@ -1162,7 +1164,7 @@ function Profile() {
   const saveProfile = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch(`http://localhost:3000/api/users/${user.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: user.name, email: user.email, password: password || undefined, avatar }) });
+      const res = await fetch(`${API_BASE_URL}/api/users/${user.id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: user.name, email: user.email, password: password || undefined, avatar }) });
       if (res.ok) { updateUser({ avatar }); setMsg('Perfil actualizado correctamente'); }
     } catch(err) { setMsg('Error al guardar'); }
   };
@@ -1170,7 +1172,7 @@ function Profile() {
   const addUser = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('http://localhost:3000/api/auth/register', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newUserName, email: newUserEmail, password: newUserPassword, role: newUserRole }) });
+      const res = await fetch(`${API_BASE_URL}/api/auth/register`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name: newUserName, email: newUserEmail, password: newUserPassword, role: newUserRole }) });
       if (res.ok) {
         const u = await res.json();
         setUsers([...users, u]); setNewUserName(''); setNewUserEmail(''); setNewUserPassword(''); setNewUserRole('user');
@@ -1180,7 +1182,7 @@ function Profile() {
 
   const changeUserRole = async (userId, newRole) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/users/${userId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: newRole }) });
+      const res = await fetch(`${API_BASE_URL}/api/users/${userId}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ role: newRole }) });
       if (res.ok) {
         setUsers(users.map(u => u.id === userId ? { ...u, role: newRole } : u));
       }
@@ -1232,7 +1234,7 @@ function Profile() {
                         <button onClick={() => {
                           const newPass = prompt("Introduce la nueva contraseña:");
                           if (newPass) {
-                            fetch(`http://localhost:3000/api/users/${u.id}/password`, {
+                            fetch(`${API_BASE_URL}/api/users/${u.id}/password`, {
                               method: 'PUT', headers: {'Content-Type': 'application/json'},
                               body: JSON.stringify({ password: newPass })
                             }).then(r=>r.json()).then(res => {
@@ -1271,7 +1273,7 @@ function Reports() {
   const reportRef = useRef(null);
 
   useEffect(() => {
-    fetch('http://localhost:3000/data').then(r=>r.json()).then(d => {
+    fetch(`${API_BASE_URL}/data`).then(r=>r.json()).then(d => {
       setData({ ...d, tasks: d.tasks.map(t => ({...t, userIds: JSON.parse(t.userIds || '[]')})) });
     });
   }, []);
