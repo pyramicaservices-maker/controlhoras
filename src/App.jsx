@@ -151,9 +151,14 @@ function Login() {
     e.preventDefault();
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
-      const data = await res.json();
-      if (res.ok) { login(data.user, data.token); navigate('/'); } else setError(data.error || 'Error de login');
-    } catch (err) { setError('Error de conexión: ' + err.message); }
+      const text = await res.text();
+      try {
+        const data = JSON.parse(text);
+        if (res.ok) { login(data.user, data.token); navigate('/'); } else setError(data.error || 'Error de login');
+      } catch (err) { 
+        setError(`Error (Status ${res.status}): ${text ? text.substring(0, 50) : 'Respuesta vacía (Posible cuelgue del proxy/túnel)'}`); 
+      }
+    } catch (err) { setError('Error de red local: ' + err.message); }
   };
 
   const handleRecover = async (e) => {
