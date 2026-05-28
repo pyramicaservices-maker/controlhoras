@@ -7,7 +7,7 @@ import { PieChart as RePieChart, Pie, Cell, Tooltip, Legend } from 'recharts';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 
-const API_BASE_URL = ''; // using Vite proxy
+const API_BASE_URL = 'http://b803gdmhc8yrkopiipv2i43w.51.255.203.170.sslip.io';
 
 const AuthContext = createContext(null);
 
@@ -151,14 +151,9 @@ function Login() {
     e.preventDefault();
     try {
       const res = await fetch(`${API_BASE_URL}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
-      const text = await res.text();
-      try {
-        const data = JSON.parse(text);
-        if (res.ok) { login(data.user, data.token); navigate('/'); } else setError(data.error || 'Error de login');
-      } catch (err) { 
-        setError(`Error (Status ${res.status}): ${text ? text.substring(0, 50) : 'Respuesta vacía (Posible cuelgue del proxy/túnel)'}`); 
-      }
-    } catch (err) { setError('Error de red local: ' + err.message); }
+      const data = await res.json();
+      if (res.ok) { login(data.user, data.token); navigate('/'); } else setError(data.error || 'Error de login');
+    } catch (err) { setError('Error de conexión al servidor'); }
   };
 
   const handleRecover = async (e) => {
