@@ -11,12 +11,12 @@ export default defineConfig({
       usePolling: true // Required for Docker on Windows
     },
     proxy: {
-      '/api': 'http://host.docker.internal:3000',
-      '/data': 'http://host.docker.internal:3000',
-      '/projects': 'http://host.docker.internal:3000',
-      '/tasks': 'http://host.docker.internal:3000',
-      '/time-entries': 'http://host.docker.internal:3000',
-      '/uploads': 'http://host.docker.internal:3000'
+      '/api': { target: 'http://controlhoras-backend-1:3000', changeOrigin: true },
+      '/data': { target: 'http://controlhoras-backend-1:3000', changeOrigin: true },
+      '/projects': { target: 'http://controlhoras-backend-1:3000', changeOrigin: true },
+      '/tasks': { target: 'http://controlhoras-backend-1:3000', changeOrigin: true },
+      '/time-entries': { target: 'http://controlhoras-backend-1:3000', changeOrigin: true },
+      '/uploads': { target: 'http://controlhoras-backend-1:3000', changeOrigin: true }
     }
   }
 })
