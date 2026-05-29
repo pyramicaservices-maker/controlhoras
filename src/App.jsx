@@ -188,6 +188,9 @@ function Login() {
         {recoverMsg && <div style={{padding:'10px', marginBottom:'15px', borderRadius:'4px', width:'100%', textAlign:'center', background:'rgba(80, 250, 123, 0.1)', color:'#50fa7b', border:'1px solid #50fa7b'}}>{recoverMsg}</div>}
         
         {!isRecovering ? (
+          <div style={{color:'red',fontSize:'20px'}}>
+API_BASE_URL: {API_BASE_URL}
+</div>
           <form onSubmit={handleLogin} style={{display:'flex', flexDirection:'column', gap:'1.2rem', width:'100%'}}>
             <input type="email" placeholder="Email (ej. admin@erp.com)" value={email} onChange={e=>setEmail(e.target.value)} required className="form-group input" style={{padding:'12px', background:'rgba(0,0,0,0.3)', color:'white', border:'1px solid var(--panel-border)', borderRadius:'8px', outline:'none'}}/>
             <input type="password" placeholder="Contraseña" value={password} onChange={e=>setPassword(e.target.value)} required className="form-group input" style={{padding:'12px', background:'rgba(0,0,0,0.3)', color:'white', border:'1px solid var(--panel-border)', borderRadius:'8px', outline:'none'}}/>
