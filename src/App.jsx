@@ -188,17 +188,17 @@ function Login() {
         {recoverMsg && <div style={{padding:'10px', marginBottom:'15px', borderRadius:'4px', width:'100%', textAlign:'center', background:'rgba(80, 250, 123, 0.1)', color:'#50fa7b', border:'1px solid #50fa7b'}}>{recoverMsg}</div>}
         
         {!isRecovering ? (
-          <div style={{color:'red',fontSize:'20px'}}>
-API_BASE_URL: {API_BASE_URL}
-</div>
-          <form onSubmit={handleLogin} style={{display:'flex', flexDirection:'column', gap:'1.2rem', width:'100%'}}>
-            <input type="email" placeholder="Email (ej. admin@erp.com)" value={email} onChange={e=>setEmail(e.target.value)} required className="form-group input" style={{padding:'12px', background:'rgba(0,0,0,0.3)', color:'white', border:'1px solid var(--panel-border)', borderRadius:'8px', outline:'none'}}/>
-            <input type="password" placeholder="Contraseña" value={password} onChange={e=>setPassword(e.target.value)} required className="form-group input" style={{padding:'12px', background:'rgba(0,0,0,0.3)', color:'white', border:'1px solid var(--panel-border)', borderRadius:'8px', outline:'none'}}/>
-            <button type="submit" className="btn-primary" style={{marginTop:'10px'}}>Iniciar Sesión</button>
-            <p style={{textAlign:'center', marginTop:'10px', fontSize:'0.85rem', color:'var(--text-muted)'}}>
-              <span style={{cursor:'pointer', textDecoration:'underline'}} onClick={() => {setIsRecovering(true); setError(''); setRecoverMsg('');}}>¿Has olvidado tu contraseña?</span>
-            </p>
-          </form>
+          <>
+            <div style={{color:'red',fontSize:'20px'}}>API_BASE_URL: {API_BASE_URL}</div>
+            <form onSubmit={handleLogin} style={{display:'flex', flexDirection:'column', gap:'1.2rem', width:'100%'}}>
+              <input type="email" placeholder="Email (ej. admin@erp.com)" value={email} onChange={e=>setEmail(e.target.value)} required className="form-group input" style={{padding:'12px', background:'rgba(0,0,0,0.3)', color:'white', border:'1px solid var(--panel-border)', borderRadius:'8px', outline:'none'}}/>
+              <input type="password" placeholder="Contraseña" value={password} onChange={e=>setPassword(e.target.value)} required className="form-group input" style={{padding:'12px', background:'rgba(0,0,0,0.3)', color:'white', border:'1px solid var(--panel-border)', borderRadius:'8px', outline:'none'}}/>
+              <button type="submit" className="btn-primary" style={{marginTop:'10px'}}>Iniciar Sesión</button>
+              <p style={{textAlign:'center', marginTop:'10px', fontSize:'0.85rem', color:'var(--text-muted)'}}>
+                <span style={{cursor:'pointer', textDecoration:'underline'}} onClick={() => {setIsRecovering(true); setError(''); setRecoverMsg('');}}>¿Has olvidado tu contraseña?</span>
+              </p>
+            </form>
+          </>
         ) : (
           <form onSubmit={handleRecover} style={{display:'flex', flexDirection:'column', gap:'1.2rem', width:'100%'}}>
             <p style={{textAlign:'center', color:'var(--text-muted)', fontSize:'0.9rem', marginBottom:'10px'}}>Introduce tu email y te enviaremos instrucciones para recuperar tu contraseña.</p>
