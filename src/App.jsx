@@ -149,11 +149,20 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    const url = `${API_BASE_URL}/api/auth/login`;
     try {
-      const res = await fetch(`${API_BASE_URL}/api/auth/login`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
-      const data = await res.json();
-      if (res.ok) { login(data.user, data.token); navigate('/'); } else setError(data.error || 'Error de login');
-    } catch (err) { setError('Error de conexión al servidor'); }
+      const res = await fetch(url, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ email, password }) });
+      const text = await res.text();
+      try {
+        const data = JSON.parse(text);
+        if (res.ok) { login(data.user, data.token); navigate('/'); } 
+        else setError(`Error de login: ${data.error}`);
+      } catch (err) { 
+        setError(`Diagnóstico:\nAPI_BASE_URL: "${API_BASE_URL}"\nURL: ${url}\nStatus: ${res.status}\nBody: ${text.substring(0, 150)}`);
+      }
+    } catch (err) { 
+      setError(`Fetch/CORS Error:\nAPI_BASE_URL: "${API_BASE_URL}"\nURL: ${url}\nDetalle: ${err.message}`); 
+    }
   };
 
   const handleRecover = async (e) => {
@@ -175,7 +184,7 @@ function Login() {
         <img src="/logo.png" alt="Pyramica Logo" style={{width:'80%', marginBottom:'2rem', objectFit:'contain'}} onError={(e)=>{e.target.style.display='none'; e.target.nextSibling.style.display='block'}} />
         <h2 style={{display:'none', textAlign:'center', marginBottom:'1.5rem'}}>Pyramica SaaS</h2>
         
-        {error && <div className="alert-red" style={{padding:'10px', marginBottom:'15px', borderRadius:'4px', width:'100%', textAlign:'center', background:'rgba(255,85,85,0.1)', color:'#ff5555', border:'1px solid #ff5555'}}>{error}</div>}
+        {error && <div className="alert-red" style={{padding:'10px', marginBottom:'15px', borderRadius:'4px', width:'100%', textAlign:'center', background:'rgba(255,85,85,0.1)', color:'#ff5555', border:'1px solid #ff5555', whiteSpace:'pre-wrap', wordBreak:'break-word'}}>{error}</div>}
         {recoverMsg && <div style={{padding:'10px', marginBottom:'15px', borderRadius:'4px', width:'100%', textAlign:'center', background:'rgba(80, 250, 123, 0.1)', color:'#50fa7b', border:'1px solid #50fa7b'}}>{recoverMsg}</div>}
         
         {!isRecovering ? (
